@@ -9,19 +9,14 @@ export const Editproduct = ({ setViewMode, data, editProductIndex }) => {
   const [mrp, setMRP] = useState(data[editProductIndex].mrp);
   const [discount, setDiscount] = useState(data[editProductIndex].discount);
   const [netRate, setnetRate] = useState(data[editProductIndex].netRate);
-  const [add, setAdd] = useState(data[editProductIndex].add);
-  const [saleRate, setSaleRate] = useState(data[editProductIndex].saleRate);
   const [category, setCategory] = useState(data[editProductIndex].category);
 
   useEffect(() => {
-    if (mrp !== 0 && discount !== 0 && add !== 0) {
+    if (mrp !== 0 && discount !== 0) {
       const netRate = mrp * (1 - discount / 100);
       setnetRate(netRate);
-      // const updatedSaleRate = netRate * (1 + add / 100);
-      const updatedSaleRate = mrp * (1 - (discount-add) / 100);
-      setSaleRate(updatedSaleRate);
     }
-  }, [mrp, discount, add]);
+  }, [mrp, discount]);
 
   const editProductId = data[editProductIndex].id
 
@@ -33,8 +28,6 @@ export const Editproduct = ({ setViewMode, data, editProductIndex }) => {
       mrp === 0 ||
       discount === 0 ||
       netRate === 0 ||
-      add === 0 ||
-      saleRate === 0 ||
       category === ""
     ) {
       toast.error("Please fill the required fields", { duration: 1500 });
@@ -46,14 +39,13 @@ export const Editproduct = ({ setViewMode, data, editProductIndex }) => {
       mrp: parseFloat(mrp),
       discount: parseFloat(discount),
       netRate: parseFloat(netRate),
-      add: parseFloat(add),
-      saleRate: parseFloat(saleRate),
       category: category,
     };
 
     editApi(`product/editProducts/${editProductId}`,data).then((res) => {
       if (res.statusText === 'OK') {
         toast.success('Material update successfully!', { duration : 1500 });
+        setViewMode("view")
       }
       else {
         toast.error('Something went Wrong', { duration : 1500 });
@@ -71,16 +63,7 @@ export const Editproduct = ({ setViewMode, data, editProductIndex }) => {
             <h1 className="bg-yellow-400 py-1 px-2 rounded-lg">
               Net Rate: {mrp * (1 - discount / 100)}
             </h1>
-            <h1 className="bg-green-400 py-1 px-2 rounded-lg">
-              {/* Sale Rate: {mrp * (1 - discount / 100) * (1 + add / 100)} */}
-              Sale Rate: {mrp * (1 - (discount-add) / 100)}
-            </h1>
-            <h1 className="bg-blue-600 py-1 px-2 rounded-lg">
-              Round Value:
-              {/* {Math.round(mrp * (1 - discount / 100) * (1 + add / 100) + 0.5)} */}
-              {Math.round(mrp * (1 - (discount-add) / 100))}
-            </h1>
-          </div>
+          </div>  
       <div className="flex justify-center items-center">
         <div className=" w-[550px] mt-10 py-10 px-10 flex flex-col justify-start bg-white space-y-4 rounded-2xl shadow-lg">
           <h1 className="text-center font-medium">ADD PRODUCTS</h1>
@@ -122,16 +105,6 @@ export const Editproduct = ({ setViewMode, data, editProductIndex }) => {
               name="discount"
               value={discount}
               onChange={(e) => setDiscount(e.target.value)}
-            />
-          </div>
-          <div className="flex justify-between items-center space-x-5">
-            <label htmlFor="quantity">Add (+):</label>
-            <input
-              type="number"
-              className="rounded border-2 p-3 w-[300px]"
-              name="add"
-              value={add}
-              onChange={(e) => setAdd(e.target.value)}
             />
           </div>
           <div className="flex justify-between">

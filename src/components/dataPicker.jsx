@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { format, parse } from 'date-fns';
+import toast from 'react-hot-toast';
+import { getReportByDate } from '../server/app';
 
-function DateRangePicker() {
+function DateRangePicker( {setdata, settotal, settotalItem, currentPage}) {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [StartDateSelected, setStartDateSelected] = useState(null)
@@ -18,14 +20,21 @@ function DateRangePicker() {
   };
 
   const handlePrintData = () => {
+
     if (startDate && endDate) {
-      const start = format(startDate, 'yyyy-MM-dd');
-      setStartDateSelected(start);
-      const end = format(endDate, 'yyyy-MM-dd');
-      setEndDateSelected(end);
+      const start = format(startDate, 'dd-MM-yyyy');
+      // setStartDateSelected(start);
+      // setstartDate(start);
+      // console.log(start)
+      const end = format(endDate, 'dd-MM-yyyy');
+      // setEndDateSelected(end);
+      // setendDate(end);
+      // console.log(end)
+      getReportByDate(`reports/by?page=${currentPage}&maxResult=9&startDate=${start}&endDate=${end}`, setdata, settotal, settotalItem);
     } else {
-      console.log('Please select both start and end dates.');
+      toast.error('Please select both start and end dates.');
     }
+
   };
 
   return (

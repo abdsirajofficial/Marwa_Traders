@@ -4,12 +4,13 @@ import { toast } from "react-hot-toast";
 export const api_url = import.meta.env.VITE_APP_API_URL;
 
 //login api
-export const loginAdmin = async (path, data) => {
+export const loginAdmin = async (path, data, setShowLoading) => {
   try{
     const res = await axios.post(api_url + path,data)
     return res
   } catch (err){
     toast.error(err.response.data.error, {duration: 1500})
+    setShowLoading(false)
   }
 }
 
@@ -79,14 +80,81 @@ export const addbill = async (data) => {
 };
 
 //report get api
-export const getReport = async (path,setdata,settotal) => {
+export const getReport = async (path,setdata,settotal, settotalItem) => {
   try {
     const res = await axios.get(api_url + path);
     setdata(res.data.success);
-    settotal(res.data.totalPages);
+    settotal(res.data.totalPages)
+    settotalItem(res.data.countByInvoiceNumber);
     return res;
   } 
   catch (err) {
+    toast.error(err.response.data.error.message,{ duration : 1500});
+  }
+};
+
+//report get report by name
+export const getReportByName = async (path,setdata,settotal, settotalItem) => {
+  try {
+    const res = await axios.get(api_url + path);
+    setdata(res.data.success);
+    settotal(res.data.totalPages)
+    settotalItem(res.data.countByInvoiceNumber);
+    return res;
+  } 
+  catch (err) {
+    toast.error(err.response.data.error,{ duration : 1500});
+  }
+};
+
+
+//report get product details by invoice number
+export const getPoductDetails = async (path, setViewBillData) => {
+  try {
+    const res = await axios.get(api_url + path);
+    setViewBillData(res.data.success);
+    return res;
+  } 
+  catch (err) {
+    toast.error(err.response.data.error.message,{ duration : 1500});
+  }
+};
+//report get total product amount by invoice number
+export const getTotalAmount = async (path, setProductData) => {
+  try {
+    const res = await axios.get(api_url + path);
+    setProductData(res.data.success);
+    return res;
+  } 
+  catch (err) {
+    toast.error(err.response.data.error.message,{ duration : 1500});
+  }
+};
+
+//get report details by date
+export const getReportByDate = async (path,setdata,settotal, settotalItem) => {
+  try {
+    const res = await axios.get(api_url + path);
+    setdata(res.data.success);
+    settotal(res.data.totalPages)
+    settotalItem(res.data.countByInvoiceNumber);
+    return res;
+  } 
+  catch (err) {
+    toast.error(err.response.data.error.message,{ duration : 1500});
+  }
+};
+
+//get report for download
+export const getReportPdf = async (path, setdata) => {
+  try {
+    const res = await axios.get(api_url + path);
+    setdata(res.data.success);
+    console.log(res.data.success)
+    return res;
+  } 
+  catch (err) {
+    // toast.error(err.response.data.error.message,{ duration : 1500});
     toast.error(err.response.data.error.message,{ duration : 1500});
   }
 };

@@ -54,6 +54,7 @@ export const ViewProducts = ({
           newLoading[index] = false;
           return newLoading;
         });
+        getApi(`product/getProducts?page=1&maxResult=9`, setdata, settotal);
       } else {
         toast.error("Something went Wrong", { duration: 1500 });
         setdelIsLoading((prevLoading) => {
@@ -101,15 +102,13 @@ export const ViewProducts = ({
         </div>
       </div>
 
-      <div className="w-full h-auto bg-white shadow-sm grid grid-cols-10 grid-rows-1 text-center rounded py-3 mt-3 font-semibold text-[13px] ">
+      <div className="w-full h-auto bg-white shadow-sm grid grid-cols-8 grid-rows-1 text-center rounded py-3 mt-3 font-semibold text-[13px] ">
         <p className="w-full col-span-2">Name</p>
         <p>Quantity</p>
         <p>UPVC/CPVC</p>
         <p>Mrp Rate</p>
         <p>Dis (-)</p>
         <p>Net Rate</p>
-        <p>Add (+)</p>
-        <p>Sale Rate</p>
         <p>Action</p>
       </div>
 
@@ -118,7 +117,7 @@ export const ViewProducts = ({
           data.map((item, index) => (
             <div
               key={index}
-              className="grid grid-cols-10 space-x-2 text-center w-full text-[13px] bg-white shadow-sm  border-b py-3 hover:bg-zinc-50"
+              className="grid grid-cols-8 space-x-2 text-center w-full text-[13px] bg-white shadow-sm  border-b py-3 hover:bg-zinc-50"
             >
               <p className="w-full col-span-2 ">
                 {item.productName}
@@ -128,8 +127,6 @@ export const ViewProducts = ({
               <p className=" flex justify-center items-center">{item.mrp}</p>
               <p className=" flex justify-center items-center">{item.discount}%</p>
               <p className=" flex justify-center items-center">{item.netRate.toFixed(2)}</p>
-              <p className=" flex justify-center items-center">{item.add}%</p>
-              <p className=" flex justify-center items-center">{item.saleRate.toFixed(2)}</p>
               <div className=" flex space-x-3 justify-center items-center">
                 <Pencil
                   className=" cursor-pointer hover:text-blue-700 text-[5px] "

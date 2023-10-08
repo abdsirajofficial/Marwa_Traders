@@ -10,8 +10,6 @@ import toast from "react-hot-toast";
 export const BillForm = ({ setViewMode, selectedItems, state, setState, setinvoice }) => {
 
   const [currentDate, setCurrentDate] = useState(new Date());
-  // const [invoice, setinvoice] = useState()
-
 
   useEffect(() => {
     // Format the current date as "dd/mm/yyyy"
@@ -64,7 +62,6 @@ export const BillForm = ({ setViewMode, selectedItems, state, setState, setinvoi
       area: "",
       date: "",
     });
-    setprintbtn(true);
     setViewMode("Billing");
   };
 
@@ -91,7 +88,7 @@ export const BillForm = ({ setViewMode, selectedItems, state, setState, setinvoi
             onClick={() => handleClose()}
           >
             <XCircle />
-            <p>Clear All</p>
+            <p>Cancel</p>
           </button>
           <button
             className="flex space-x-3 text-white bg-green-500 hover:bg-green-700 px-4 py-2 rounded-md"
@@ -132,7 +129,7 @@ export const BillForm = ({ setViewMode, selectedItems, state, setState, setinvoi
               <p>CASH BILL</p>
             </div>
             <div className=" grid grid-cols-2 p-2 border-r-2">
-              <p>INVOICE No : </p>
+              <p>INVOICE NO : </p>
               <p></p>
               <p>PAYMENT MODE : </p>
               <p>{state.paymentMode}</p>
@@ -141,7 +138,7 @@ export const BillForm = ({ setViewMode, selectedItems, state, setState, setinvoi
             </div>
           </div>
         </div>
-        <table className="w-full text-center border-x-2">
+        <table className="w-full text-center border-x-2 text-[14px]">
           <thead>
             <tr className=" border-b-2">
               <th className="p-2 ">S.No</th>
@@ -371,7 +368,7 @@ export const BillForm = ({ setViewMode, selectedItems, state, setState, setinvoi
                 <p className=" font-medium underline"> E.& O.E </p>
                 <div className=" text-[13px]">
                   <p>
-                    Certiffied the all particular given above are true and
+                    Certified the all particular given above are true and
                     correct.
                   </p>
                   <p>Goods once sold are not returnable or exchangable.</p>

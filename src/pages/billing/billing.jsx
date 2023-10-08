@@ -31,7 +31,7 @@ export const Billing = ({
   const discRef = useRef(null); //
 
   useEffect(() => {
-    getProductBySearch(`product/getProductBySearch`, setallItem, settotal);
+    getProductBySearch(`product/getProductBySearch`, setallItem);
   },[]);
 
   const handleInputChange = (e) => {
@@ -94,7 +94,7 @@ export const Billing = ({
     if (selectedItem) {
       // Display the selected item or perform other actions
       setselectforvlaueEnter((prevData) => [...prevData, selectedItem]);
-      setdisc(selectedItem.discount - selectedItem.add);
+      setdisc();
       setdata([]);
       setsearchProduct("");
       // You can also update state or trigger other UI changes here
@@ -102,14 +102,13 @@ export const Billing = ({
   };
 
   const handleAddSelectedItem = (item) => {
-    if (qty > 0) {
+    const quantityVal = item.quantity
+    if (qty > 0 && disc >= 0) {
       // Check if the item already exists in selectedItems
       const isDuplicate = selectedItems.some(
         (selectedItem) => selectedItem.id === item.id
       );
-
-      
-
+  
       if (isDuplicate) {
         // Display an alert or toast message indicating that the item is already selected
         toast.error("This product is already in the selected product.", {
@@ -119,19 +118,29 @@ export const Billing = ({
         setdisc();
         setselectforvlaueEnter([]);
       } else {
-        // If it's not a duplicate, add the item to selectedItems
-        const updatedItem = { ...item, quantity: parseInt(qty), discount: parseFloat(disc) };
-
-        setselectedItems((prevData) => [...prevData, updatedItem]);
-        // Clear quantity and discount input fields
-        setqty();
-        setdisc();
-        setselectforvlaueEnter([]);
+        // Check if the quantity is greater than or equal to parseInt(qty)
+        if (qty <= quantityVal ) {
+          // If it's not a duplicate and quantity is valid, add the item to selectedItems
+          const updatedItem = { ...item, quantity: parseInt(qty), discount: parseFloat(disc) };
+  
+          setselectedItems((prevData) => [...prevData, updatedItem]);
+          // Clear quantity and discount input fields
+          setqty();
+          setdisc();
+          setselectforvlaueEnter([]);
+        } else {
+          // Display an error message indicating that the quantity is invalid
+          toast.error(`This Product is Out stock ${quantityVal}.`, { duration: 1500 });
+          setqty();
+          setdisc();
+          setselectforvlaueEnter([]);
+        }
       }
     } else {
-      toast.error("Please enter the quantity", { duration: 1500 });
+      toast.error("Please enter the quantity and discount", { duration: 1500 });
     }
   };
+  
 
   const handleSelectItem = (index) => {
     // Copy the selectedItems array to a new array
@@ -198,10 +207,9 @@ export const Billing = ({
       {/* search data fucntion */}
       <div className=" absolute top-[5rem] w-full left-0">
         {data.map((item, index) => {
-          // const total = qty * item.saleRate * (1 - disc / 100);
           return (
             <div
-              className="w-full h-auto bg-red-100 shadow-sm grid grid-cols-9 grid-rows-1 text-center rounded py-3  text-[14px] hover:bg-blue-200 cursor-pointer "
+              className="w-full h-auto bg-red-100 shadow-sm grid grid-cols-7 grid-rows-1 text-center rounded py-3  text-[14px] hover:bg-blue-200 cursor-pointer "
               key={index}
               onClick={() => handleSelected(item.id)}
             >
@@ -211,8 +219,6 @@ export const Billing = ({
               <p className=" flex justify-center items-center">{item.mrp}</p>
               <p className=" flex justify-center items-center">{item.discount}%</p>
               <p className=" flex justify-center items-center">{item.netRate.toFixed(2)}</p>
-              <p className=" flex justify-center items-center">{item.add}%</p>
-              <p className=" flex justify-center items-center">{(item.saleRate.toFixed(2))}</p>
             </div>
           );
         })}
@@ -283,7 +289,7 @@ export const Billing = ({
         <p>S.No</p>
         <p className=" col-span-2">Product</p>
         <p>Quantity</p>
-        <p>Sale Rate</p>
+        <p>Rate</p>
         <p>Disc(-)</p>
         <p>Total</p>
         <p>Action</p>

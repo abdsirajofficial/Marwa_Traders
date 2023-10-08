@@ -28,8 +28,8 @@ export const Login = () => {
     
     const data = { email: username, password: password };
     
-    loginAdmin("user/login", data).then((res) => {
-      if (res.statusText === 'OK') {
+    loginAdmin("user/login", data, setShowLoading).then((res) => {
+      if (res.status === 200) {
         const token = res.data.token;
         if (token) {
           const decoded = jwt_decode(token);
@@ -98,18 +98,14 @@ export const Login = () => {
           </div>
         </div>
         <button
-          className="bg-[#2200f1] w-full p-3 text-white mt-10 rounded"
+          className="bg-[#2200f1] flex justify-center items-center gap-4 w-full p-3 text-white mt-10 rounded"
           onClick={() => onSubmit()}
-        >
+        > 
           Login
-        </button>
-        {/* <div className="flex justify-center pt-5 space-x-2 md:text-[18px] text-[14px]"> */}
-        {/* <h1>Don’t have an account?</h1>
-          <button className="text-white font-medium">Create account</button> */}
-        {showLoading && 
-          <img src={loadingIcon} alt="no img"/>
+          {showLoading && 
+          <img src={loadingIcon} alt="no img" className=" w-5"/>
         }
-        {/* </div> */}
+        </button>
       </div>
     </div>
   );

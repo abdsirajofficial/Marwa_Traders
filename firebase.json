@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "site": "marwa-a7adf",
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

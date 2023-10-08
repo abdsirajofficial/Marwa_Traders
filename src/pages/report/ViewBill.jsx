@@ -12,11 +12,28 @@ import numWords from "num-words";
 
 class ComponentToPrint extends React.Component {
   render() {
-    const { selectedItems, state, invoice} = this.props;
+
+    const { ViewBillData } = this.props;
+
+    if (!ViewBillData || ViewBillData.length === 0) {
+        // Handle the case where ViewBillData is undefined or empty
+        return <p>No data available</p>;
+      }
+
+    const commonValues = {
+        name: ViewBillData[0].name,
+        area: ViewBillData[0].area,
+        invoiceNumber: ViewBillData[0].invoiceNumber,
+        gst: ViewBillData[0].gst,
+        spl: ViewBillData[0].spl,
+        date: ViewBillData[0].date,
+        paymentMethod: ViewBillData[0].paymentMethod
+      };
 
     function numberToWords(num) {
       return numWords(num);
     }
+
     return (
       <div className=" bg-white w-full h-min p-5 rounded-lg mt-5 ">
       <div className=" flex justify-center items-center space-x-5 border-2 p-2">
@@ -32,30 +49,35 @@ class ComponentToPrint extends React.Component {
         </div>
       </div>
       <div className=" flex justify-between border-b-2">
+
         <div className=" w-1/2 border-l-2 p-2 text-[14px]">
           <div className=" flex space-x-5">
             <p className=" font-bold ">To :-</p>
-            <p>{state.name}</p>
+            <p>{commonValues.name}</p>
           </div>
           <div className=" pl-12  ">
-            <p>{state.area}</p>
+            <p>{commonValues.area}</p>
           </div>
         </div>
+
         <div className=" w-1/2 border-l-2 text-[14px]">
           <div className=" flex space-x-10 border-b-2 border-r-2 p-2 font-medium">
             <p>TAX INVOICE</p>
             <p>CASH BILL</p>
           </div>
+
           <div className=" grid grid-cols-2 p-2 border-r-2">
             <p>INVOICE NO : </p>
-            <p>{invoice}</p>
+            <p>{commonValues.invoiceNumber}</p>
             <p>PAYMENT MODE : </p>
-            <p>{state.paymentMode}</p>
+            <p>{commonValues.paymentMethod}</p>
             <p>DATE :</p>
-            <p> {state.date}</p>
+            <p> {commonValues.date}</p>
           </div>
+
         </div>
       </div>
+
       <table className="w-full text-center border-x-2 text-[14px]">
         <thead>
           <tr className=" border-b-2">
@@ -68,7 +90,7 @@ class ComponentToPrint extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {selectedItems.map((item, index) => {
+          {ViewBillData.map((item, index) => {
             // Calculate the total for the current item
             const total = (
               item.quantity *
@@ -98,10 +120,10 @@ class ComponentToPrint extends React.Component {
               rowSpan="4"
             >
               {numberToWords(
-                state.spl > 0
+                commonValues.spl > 0
                   ? Math.round(
                       parseFloat(
-                        selectedItems.reduce((acc, item) => {
+                        ViewBillData.reduce((acc, item) => {
                           return (
                             acc +
                             item.quantity *
@@ -111,7 +133,7 @@ class ComponentToPrint extends React.Component {
                         }, 0)
                       ) +
                         parseFloat(
-                          selectedItems.reduce((acc, item) => {
+                          ViewBillData.reduce((acc, item) => {
                             return (
                               acc +
                               item.quantity *
@@ -120,10 +142,10 @@ class ComponentToPrint extends React.Component {
                             );
                           }, 0)
                         ) *
-                          (state.gst / 100)
+                          (commonValues.gst / 100)
                     ) -
                       Math.round(
-                        selectedItems.reduce((acc, item) => {
+                        ViewBillData.reduce((acc, item) => {
                           return (
                             acc +
                             item.quantity *
@@ -131,11 +153,11 @@ class ComponentToPrint extends React.Component {
                               (1 - item.discount / 100)
                           );
                         }, 0) *
-                          (state.spl / 100)
+                          (commonValues.spl / 100)
                       )
                   : Math.round(
                       parseFloat(
-                        selectedItems.reduce((acc, item) => {
+                        ViewBillData.reduce((acc, item) => {
                           return (
                             acc +
                             item.quantity *
@@ -145,7 +167,7 @@ class ComponentToPrint extends React.Component {
                         }, 0)
                       ) +
                         parseFloat(
-                          selectedItems.reduce((acc, item) => {
+                          ViewBillData.reduce((acc, item) => {
                             return (
                               acc +
                               item.quantity *
@@ -154,7 +176,7 @@ class ComponentToPrint extends React.Component {
                             );
                           }, 0)
                         ) *
-                          (state.gst / 100)
+                          (commonValues.gst / 100)
                     )
               )}
               <p className=" font-medium underline">Our Bank Details :</p>
@@ -172,7 +194,7 @@ class ComponentToPrint extends React.Component {
             </td>
             <td className="p-1 text-center pr-8 font-medium">
               {/* Calculate and display the grand total of all items */}
-              {selectedItems
+              {ViewBillData
                 .map((item) => {
                   const total =
                     item.quantity * item.mrp * (1 - item.discount / 100);
@@ -185,33 +207,33 @@ class ComponentToPrint extends React.Component {
 
           <tr className=" border-b-2">
             <td className="p-1 text-right border-r-2" colSpan="2">
-              Gst {state.gst}%
+              Gst {commonValues.gst}%
             </td>
             <td className="p-1 text-center pr-8 " colSpan="2">
               {(
-                selectedItems.reduce((acc, item) => {
+                ViewBillData.reduce((acc, item) => {
                   return (
                     acc + item.quantity * item.mrp * (1 - item.discount / 100)
                   );
                 }, 0) *
-                (state.gst / 100)
+                (commonValues.gst / 100)
               ).toFixed(2)}
             </td>
           </tr>
-          {state.spl > 0 && (
+          {commonValues.spl > 0 && (
             <tr className="border-b-2">
               <td className="p-1 text-right border-r-2" colSpan="2">
-                Special dis(-) {state.spl}%
+                Special dis(-) {commonValues.spl}%
               </td>
               <td className="p-1 text-center pr-8" colSpan="2">
                 {(
-                  selectedItems.reduce((acc, item) => {
+                  ViewBillData.reduce((acc, item) => {
                     return (
                       acc +
                       item.quantity * item.mrp * (1 - item.discount / 100)
                     );
                   }, 0) *
-                  (state.spl / 100)
+                  (commonValues.spl / 100)
                 ).toFixed(2)}
               </td>
             </tr>
@@ -222,10 +244,10 @@ class ComponentToPrint extends React.Component {
               Total
             </td>
             <td className="p-1 text-center pr-8 font-medium" colSpan="">
-              {state.spl > 0
+              {commonValues.spl > 0
                 ? (
                     parseFloat(
-                      selectedItems.reduce((acc, item) => {
+                      ViewBillData.reduce((acc, item) => {
                         return (
                           acc +
                           item.quantity * item.mrp * (1 - item.discount / 100)
@@ -233,27 +255,27 @@ class ComponentToPrint extends React.Component {
                       }, 0)
                     ) +
                     parseFloat(
-                      selectedItems.reduce((acc, item) => {
+                      ViewBillData.reduce((acc, item) => {
                         return (
                           acc +
                           item.quantity * item.mrp * (1 - item.discount / 100)
                         );
                       }, 0)
                     ) *
-                      (state.gst / 100)
+                      (commonValues.gst / 100)
                   ).toFixed(2) -
                   (
-                    selectedItems.reduce((acc, item) => {
+                    ViewBillData.reduce((acc, item) => {
                       return (
                         acc +
                         item.quantity * item.mrp * (1 - item.discount / 100)
                       );
                     }, 0) *
-                    (state.spl / 100)
+                    (commonValues.spl / 100)
                   ).toFixed(2)
                 : (
                     parseFloat(
-                      selectedItems.reduce((acc, item) => {
+                      ViewBillData.reduce((acc, item) => {
                         return (
                           acc +
                           item.quantity * item.mrp * (1 - item.discount / 100)
@@ -261,18 +283,18 @@ class ComponentToPrint extends React.Component {
                       }, 0)
                     ) +
                     parseFloat(
-                      selectedItems.reduce((acc, item) => {
+                      ViewBillData.reduce((acc, item) => {
                         return (
                           acc +
                           item.quantity * item.mrp * (1 - item.discount / 100)
                         );
                       }, 0)
                     ) *
-                      (state.gst / 100)
+                      (commonValues.gst / 100)
                   ).toFixed(2)}
             </td>
           </tr>
-          {state.spl <= 0 && (
+          {commonValues.spl <= 0 && (
             <tr>
               <td colSpan="3"></td>
             </tr>
@@ -286,7 +308,7 @@ class ComponentToPrint extends React.Component {
               <p className=" font-medium underline"> E.& O.E </p>
               <div className=" text-[13px]">
                 <p>
-                  Certiffied the all particular given above are true and
+                  Certified the all particular given above are true and
                   correct.
                 </p>
                 <p>Goods once sold are not returnable or exchangable.</p>
@@ -305,10 +327,10 @@ class ComponentToPrint extends React.Component {
               GRAND TOTAL
             </td>
             <td className="text-center pr-8 border-b-2 font-medium">
-              {state.spl > 0
+              {commonValues.spl > 0
                 ? Math.round(
                     parseFloat(
-                      selectedItems.reduce((acc, item) => {
+                      ViewBillData.reduce((acc, item) => {
                         return (
                           acc +
                           item.quantity * item.mrp * (1 - item.discount / 100)
@@ -316,7 +338,7 @@ class ComponentToPrint extends React.Component {
                       }, 0)
                     ) +
                       parseFloat(
-                        selectedItems.reduce((acc, item) => {
+                        ViewBillData.reduce((acc, item) => {
                           return (
                             acc +
                             item.quantity *
@@ -325,20 +347,20 @@ class ComponentToPrint extends React.Component {
                           );
                         }, 0)
                       ) *
-                        (state.gst / 100)
+                        (commonValues.gst / 100)
                   ) -
                   Math.round(
-                    selectedItems.reduce((acc, item) => {
+                    ViewBillData.reduce((acc, item) => {
                       return (
                         acc +
                         item.quantity * item.mrp * (1 - item.discount / 100)
                       );
                     }, 0) *
-                      (state.spl / 100)
+                      (commonValues.spl / 100)
                   )
                 : Math.round(
                     parseFloat(
-                      selectedItems.reduce((acc, item) => {
+                      ViewBillData.reduce((acc, item) => {
                         return (
                           acc +
                           item.quantity * item.mrp * (1 - item.discount / 100)
@@ -346,7 +368,7 @@ class ComponentToPrint extends React.Component {
                       }, 0)
                     ) +
                       parseFloat(
-                        selectedItems.reduce((acc, item) => {
+                        ViewBillData.reduce((acc, item) => {
                           return (
                             acc +
                             item.quantity *
@@ -355,7 +377,7 @@ class ComponentToPrint extends React.Component {
                           );
                         }, 0)
                       ) *
-                        (state.gst / 100)
+                        (commonValues.gst / 100)
                   )}
             </td>
           </tr>
@@ -370,34 +392,25 @@ class ComponentToPrint extends React.Component {
           </tr>
         </tbody>
       </table>
+
     </div>
     );
   }
 }
 
-export const SaveBillForm = ({
-  setViewMode,
-  selectedItems,
-  state,
-  setState,
-  setselectedItems,
-  invoice,
-  setinvoice
+export const ViewBill = ({
+    setViewBillShow,
+    ViewBillData,
+    setViewBillData
 }) => {
+
   const componentRef = useRef();
 
+  console.log(ViewBillData)
+
   const handleClearData = () => {
-    setState({
-      paymentMode: "",
-      gst: 18,
-      spl: 0,
-      name: "",
-      area: "",
-      date: "",
-    });
-    setselectedItems([]);
-    setViewMode("billing");
-    setinvoice()
+    setViewBillShow(false);
+    setViewBillData([]);
   };
 
   return (
@@ -415,7 +428,6 @@ export const SaveBillForm = ({
             trigger={() => (
               <button
                 className="flex space-x-3 text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-md"
-                onClick={() => handleClearData()}
               >
                 <Printer />
                 <p>Print</p>
@@ -427,9 +439,7 @@ export const SaveBillForm = ({
 
         <ComponentToPrint
           ref={componentRef}
-          selectedItems={selectedItems}
-          state={state}
-          invoice={invoice}
+          ViewBillData={ViewBillData}
         />
       </div>
     </div>
